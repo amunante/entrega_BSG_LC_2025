@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import numpy as np
-from langdetect import detect
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import plotly.express as px
@@ -12,7 +11,7 @@ reports_dir = os.path.join(os.path.dirname(__file__), '../reports')
 os.makedirs(reports_dir, exist_ok=True)
 
 # Cargar datos
-df = pd.read_csv('../data/raw/amazon.csv')
+df = pd.read_csv('./data/raw/amazon.csv')
 
 # Eliminar duplicados
 df = df.drop_duplicates()
@@ -40,14 +39,6 @@ df["rating"] = df["rating"].apply(lambda x: float(x))
 df["rating_count"] = df["rating_count"].fillna(0)
 df["rating_count"] = df["rating_count"].astype(str).str.replace(",", "")
 df["rating_count"] = df["rating_count"].apply(lambda x: float(x))
-
-# Detectar idioma
-df["language"] = df["review_content"].apply(lambda x: detect(x))
-
-# Filtrar por idioma inglés
-for x in df.index:
-    if df.loc[x, "language"] != "en":
-        df.drop(x, inplace=True)
 
 df.reset_index(drop=True, inplace=True)
 print("Cleaned rows:", df.shape)
